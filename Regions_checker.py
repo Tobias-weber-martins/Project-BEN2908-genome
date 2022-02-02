@@ -9,6 +9,8 @@ cline= NcbiblastnCommandline(cmd='blastn', query='/mnt/c/Users/Tobias/Desktop/LA
 
 os.system(str(cline))
 
+
+
 print (cline)
 
 with open ('tst78','r') as result_read:
