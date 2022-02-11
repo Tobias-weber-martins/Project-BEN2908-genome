@@ -21,7 +21,8 @@ for file in os.listdir("/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/
         print (file_split)
         with open ('/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/Python_regions_check/xml_' +  file_split[0],'r') as result_read:
             for region, record in enumerate(NCBIXML.parse(result_read)):
-                print ('REGION ' + str(region + 1) + '\n')                   
+                print ('REGION ' + str(region + 1) + '\n')
+                #input()
                 for alignment in record.alignments:
                     for hsp in alignment.hsps:   
                         #print (hsp)
@@ -31,7 +32,7 @@ for file in os.listdir("/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/
                             query_st = hsp.query_start
                             query_end = hsp.query_end
                             Qbeg = query_st - 1 + region_st
-                            Qend = query_end -1 + region_st
+                            Qend = query_end - 1 + region_st
                             Sbeg = hsp.sbjct_start
                             Send = hsp.sbjct_end
                             scor = hsp.score
@@ -41,31 +42,29 @@ for file in os.listdir("/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/
                             print ('expect: ' + str(expct))
                             print ('Query: ' + str(Qbeg), str(Qend))
                             print ('Subject: ' + str(Sbeg), str(Send) + '\n')
-                input()
-                            for record in SeqIO.parse(file_split[0] + '_gbk', "genbank"):
-                                print (record)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                            for record in SeqIO.parse('Strains/' + file_split[0] + '_gbk.gbk', "genbank"):
+                                features = record.features
+                            for feat in features:
+                                seq_position_start = feat.location.start + 1
+                                seq_position_end = feat.location.end
+                                #print ('ALbeg =' + str(Sbeg), 'ALend =' + str(Send))
+                                #print ('gbk_strt = ' + str(seq_position_start), 'gbk_end = ' +  str(seq_position_end))
+                                #input()
+                                ''' ARRUMAR, os condicionais ainda não estão printando exclusivamente as regiões 
+                                if Sbeg < Send:                                    
+                                    if (Sbeg <= seq_position_start) and (Send >= seq_position_end):
+                                        print ('Caso Sbeg < Send')
+                                        print ('ALi =' + str(Sbeg), 'ALf =' + str(Send))
+                                        print ('Começo do gene = ' + str(seq_position_start), 'Fim do gene = ' +  str(seq_position_end))
+                                        print (feat.qualifiers)#['product'])
+                                        print ('\n\n')
+                                        input()
+                                else:
+                                    if (Sbeg <= seq_position_end) and (Send >= seq_position_start):
+                                        print ('Caso Sbeg > Sen[else]')
+                                        print ('ALi =' + str(Send), 'ALf =' + str(Sbeg))
+                                        print ('Começo do gene = ' + str(seq_position_start), 'Fim do gene = ' +  str(seq_position_end))
+                                        print (feat.qualifiers)#['product'])
+                                        print ('\n\n')
+                                        input()
+                                '''
