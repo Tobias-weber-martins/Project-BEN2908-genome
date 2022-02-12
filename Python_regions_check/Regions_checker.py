@@ -18,14 +18,16 @@ for file in os.listdir("/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/
         os.system(str(cline))
         print (cline)
         '''
-        print (file_split)
+        #print (file_split)
         with open ('/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/Python_regions_check/xml_' +  file_split[0],'r') as result_read:
             for region, record in enumerate(NCBIXML.parse(result_read)):
                 print ('REGION ' + str(region + 1) + '\n')
                 #input()
                 for alignment in record.alignments:
-                    for hsp in alignment.hsps:   
-                        #print (hsp)
+                    for hsp in alignment.hsps:
+                        for record in SeqIO.parse('Strains/' + file_split[0] + '_gbk.gbk', "genbank"):
+                            features = record.features
+                            #print (hsp)
                         if (hsp.align_length >= 450 and hsp.expect == 0) or hsp.align_length >= 1000:
                             region_st = list_regions[region][0]
                             #region_end = list_regions[region][1]
@@ -37,34 +39,21 @@ for file in os.listdir("/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/
                             Send = hsp.sbjct_end
                             scor = hsp.score
                             expct = hsp.expect
-                            print ('tamanho do alinhamento: ' + str(hsp.align_length))
+                            print ('tamanho do alinhamento: ' + str(hsp.align_length)) #ARRUMAR: printar o número de cada alinhamento
                             print ('score: ' + str(scor))
                             print ('expect: ' + str(expct))
                             print ('Query: ' + str(Qbeg), str(Qend))
-                            print ('Subject: ' + str(Sbeg), str(Send) + '\n')
-                            for record in SeqIO.parse('Strains/' + file_split[0] + '_gbk.gbk', "genbank"):
-                                features = record.features
+                            print ('Subject: ' + str(Sbeg), str(Send) + '\n')                           
                             for feat in features:
-                                seq_position_start = feat.location.start + 1
-                                seq_position_end = feat.location.end
-                                #print ('ALbeg =' + str(Sbeg), 'ALend =' + str(Send))
-                                #print ('gbk_strt = ' + str(seq_position_start), 'gbk_end = ' +  str(seq_position_end))
-                                #input()
-                                ''' ARRUMAR, os condicionais ainda não estão printando exclusivamente as regiões 
-                                if Sbeg < Send:                                    
-                                    if (Sbeg <= seq_position_start) and (Send >= seq_position_end):
-                                        print ('Caso Sbeg < Send')
-                                        print ('ALi =' + str(Sbeg), 'ALf =' + str(Send))
-                                        print ('Começo do gene = ' + str(seq_position_start), 'Fim do gene = ' +  str(seq_position_end))
-                                        print (feat.qualifiers)#['product'])
-                                        print ('\n\n')
-                                        input()
-                                else:
-                                    if (Sbeg <= seq_position_end) and (Send >= seq_position_start):
-                                        print ('Caso Sbeg > Sen[else]')
-                                        print ('ALi =' + str(Send), 'ALf =' + str(Sbeg))
-                                        print ('Começo do gene = ' + str(seq_position_start), 'Fim do gene = ' +  str(seq_position_end))
-                                        print (feat.qualifiers)#['product'])
-                                        print ('\n\n')
-                                        input()
-                                '''
+                                CDS_position_start = feat.location.start + 1
+                                CDS_position_end = feat.location.end
+                                if CDS_position_start and CDS_position_end in range(Sbeg, Send) or CDS_position_start and CDS_position_end in range(Send, Sbeg):
+                                    print (feat.qualifiers)
+                                    print ('Inicio do Alinhamento =' + str(Sbeg), 'Final do Alinhamento =' + str(Send))
+                                    print ('Começo do gene = ' + str(CDS_position_start), 'Fim do gene = ' +  str(CDS_position_end))
+                                    try:
+                                        print (feat.qualifiers['product'])
+                                    except KeyError:
+                                        print ('KeyError passed')
+                                    print ('\n\n')
+                            input()
