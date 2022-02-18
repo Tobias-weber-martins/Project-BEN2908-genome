@@ -35,11 +35,7 @@ for file in os.listdir("/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/
                                  for hsp in alignment.hsps:
                                      for record in SeqIO.parse('Strains/' + file_split[0] + '_gbk.gbk', "genbank"):
                                         features = record.features
-                                        #print (xml_rgn_str.split('_')[1]) #nome da cepa
-                                        #input()
                                      if (hsp.align_length >= 1000 and hsp.expect == 0) or hsp.align_length >= 1500:
-                                        #print (len(list_regions))
-                                        #print (cont-1)
                                         try:
                                             region_st = list_regions[cont-1][0]
                                         except IndexError:
@@ -59,32 +55,17 @@ for file in os.listdir("/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/
                                         else:
                                             linha_csv_Region.append('AL' + str(cont) + '(' + str(al_length) + ' bp)' + '(BEN2908:' + str(Qbeg) + ', BEN2908:' +  str(Qend) + ')' + '(' + xml_rgn_str.split('_')[1] + ':' +  str(Sbeg)+ ', ' + xml_rgn_str.split('_')[1] + ':' + str(Send) + ')')
                                         print (xml_rgn_str.split('_')[1])
-                                        #print ('Tamanho do alinhamento ' + str(cont) + ': ' + str(hsp.align_length))
-                                        #print ('score: ' + str(scor))
-                                        #print ('expect: ' + str(expct))
-                                        #print ('Query: ' + str(Qbeg), str(Qend))
-                                        #print ('Subject: ' + str(Sbeg), str(Send) + '\n')
-                                        #cont = cont +1
                                         cont_CDS = 1
                                         list_cont_CDS=[]
                                         for feat in features:
                                                 CDS_position_start = feat.location.start + 1
                                                 CDS_position_end = feat.location.end
                                                 if (CDS_position_start and CDS_position_end in range(Sbeg, Send)) or (CDS_position_start and CDS_position_end in range(Send, Sbeg)):
-                                                    #print (feat.qualifiers)
-                                                    #print ('Inicio do Alinhamento =' + str(Sbeg), 'Final do Alinhamento =' + str(Send))
-                                                    #print ('Começo do gene = ' + str(CDS_position_start), 'Fim do gene = ' +  str(CDS_position_end))
-                                                    #print ('cont:' + str(cont))
                                                     gene_length = abs(CDS_position_end - CDS_position_start + 1)
                                                     list_cont_CDS.append(cont_CDS)
-                                                    #print ('cont_CDS:' + str(cont_CDS))
-                                                    #print (list_cont_CDS)
-                                                    #input()
                                                     try:
-                                                        #print (feat.qualifiers['product'])
                                                         if cont != 1:
-                                                           if cont_CDS != list_cont_CDS[0]:
-                                                                #print 
+                                                           if cont_CDS != list_cont_CDS[0]: 
                                                                 linha_csv_CDS[-1] = linha_csv_CDS[-1] + ', ' + '(' + str(gene_length) + ' bp)' + feat.qualifiers['product'][0] + '[' + str(CDS_position_start) + '..' + str(CDS_position_end)  + ']\n'
                                                            else:
                                                                 linha_csv_CDS[-1] = linha_csv_CDS[-1] + '\n' +  'AL ' + str(cont) + '_' + xml_rgn_str.split('_')[1] + ':' + '(' + str(gene_length) + ' bp)' + feat.qualifiers['product'][0] + '[' + str(CDS_position_start) + '..' + str(CDS_position_end) + ']\n'                                           
@@ -105,51 +86,6 @@ for file in os.listdir("/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/
                     writer.writerow(linha_csv_Region)
                     writer.writerow(linha_csv_CDS)
                     print('escreveu')
-            #input()
-        '''
-        #print (file_split)
-        with open ('/mnt/c/Users/Tobias/Desktop/LAB/Genome_Annoucement_MT78/Python_regions_check/xml_' +  file_split[0],'r') as result_read:
-            for region, record in enumerate(NCBIXML.parse(result_read)):
-                print ('REGION ' + str(region + 1) + '\n')
-                input()
-                cont = 1
-                for alignment in record.alignments:
-                    for hsp in alignment.hsps:                        
-                        for record in SeqIO.parse('Strains/' + file_split[0] + '_gbk.gbk', "genbank"):
-                            features = record.features
-                        if (hsp.align_length >= 450 and hsp.expect == 0) or hsp.align_length >= 1000:
-                            region_st = list_regions[region][0]
-                            #region_end = list_regions[region][1]
-                            query_st = hsp.query_start
-                            query_end = hsp.query_end
-                            Qbeg = query_st - 1 + region_st
-                            Qend = query_end - 1 + region_st
-                            Sbeg = hsp.sbjct_start
-                            Send = hsp.sbjct_end
-                            scor = hsp.score
-                            expct = hsp.expect
-                            print ('Tamanho do alinhamento ' + str(cont) + ': ' + str(hsp.align_length))
-                            print ('score: ' + str(scor))
-                            print ('expect: ' + str(expct))
-                            print ('Query: ' + str(Qbeg), str(Qend))
-                            print ('Subject: ' + str(Sbeg), str(Send) + '\n')
-                            input()
-                            cont = cont +1
-                            for feat in features:
-                                CDS_position_start = feat.location.start + 1
-                                CDS_position_end = feat.location.end
-                                if CDS_position_start and CDS_position_end in range(Sbeg, Send) or CDS_position_start and CDS_position_end in range(Send, Sbeg):
-                                    print (feat.qualifiers)
-                                    print ('Inicio do Alinhamento =' + str(Sbeg), 'Final do Alinhamento =' + str(Send))
-                                    print ('Começo do gene = ' + str(CDS_position_start), 'Fim do gene = ' +  str(CDS_position_end))
-                                    try:
-                                        print (feat.qualifiers['product'])
-                                    except KeyError:
-                                        print ('KeyError passed')
-                                    print ('\n\n')
-                            #input()
-'''
-
 
 
 
